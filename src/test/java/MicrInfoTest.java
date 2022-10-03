@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -6,8 +7,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class MicrInfoTest {
 
     @Test
-    @DisplayName("Test number one")
-    void testNumberOne() {
+//    @Disabled
+    @DisplayName("Oman MICR Test")
+    void omanMircTest() {
         MicrInfo micrInfo = new MicrInfo();
         String micr = "<00002019<:02=0003:00000010220474< 001";
         micrInfo.parse(micr);
@@ -19,8 +21,9 @@ class MicrInfoTest {
     }
 
     @Test
-    @DisplayName("Test number two")
-    void testNumberTwo() {
+//    @Disabled
+    @DisplayName("UAE MICR Test")
+    void uaeMicrTest() {
         MicrInfo micrInfo = new MicrInfo();
         String micr = "<001590:013320143:<5003352420<";
         micrInfo.parse(micr);
@@ -32,8 +35,9 @@ class MicrInfoTest {
     }
 
     @Test
-    @DisplayName("Test number three")
-    void testNumberThree() {
+//    @Disabled
+    @DisplayName("Bahrain MICR Test")
+    void bahrainMicrTest() {
         MicrInfo micrInfo = new MicrInfo();
         String micr = "<000013<09=01:0001077181611<01";
         micrInfo.parse(micr);
