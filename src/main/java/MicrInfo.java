@@ -1,3 +1,5 @@
+import java.util.regex.Pattern;
+
 public class MicrInfo implements MicrParser {
 
     private String chequeNumber;
@@ -5,25 +7,43 @@ public class MicrInfo implements MicrParser {
     private String branchCode;
     private String accountNumber;
     private String chequeDigit;
+    private Pattern pattern_;
 
     @Override
     public MicrInfo parse(String micr) {
+        String modifiedMicr = micr.substring(1);
         if (micr.contains("=")) {
-            parseWithEqualSign(micr);
+            parseWithEqualSign(modifiedMicr);
         } else {
-            parseWithoutEqualSign(micr);
+            parseWithoutEqualSign(modifiedMicr);
         }
         System.out.println(toString());
         return this;
     }
 
     private void parseWithEqualSign(String micr) {
-        assignValuesToFields(getArrayOfFields(micr.split("<|:|="), true));
+        setPattern(true);
+        String[] values = pattern_.split(micr);
+        assignValuesToFields(getArrayOfFields(values, true));
+
     }
 
     private void parseWithoutEqualSign(String micr) {
-        assignValuesToFields(getArrayOfFields(micr.split("<|:"), false));
+        setPattern(false);
+        String[] values = pattern_.split(micr);
+        assignValuesToFields(getArrayOfFields(values, false));
 
+    }
+
+    private void setPattern(boolean withEqualSign) {
+        String delimiter;
+        if (withEqualSign) {
+            delimiter = "<:?|<.*?|:|=";
+        } else {
+            delimiter = ":<?|<.*?";
+        }
+
+        pattern_ = Pattern.compile(delimiter);
     }
     @Override
     public String toString() {
@@ -93,16 +113,13 @@ public class MicrInfo implements MicrParser {
         String[] values = new String[5];
         int j = 0;
         for (String s : tokens) {
-            if (!s.equals("")) {
-                if (!hasEqualSign && j == 1) {
-                    values[j] = s.substring(2, 4);
-                    values[j + 1] = s.substring(4);
-                    j = 3;
-                } else {
-                    values[j] = s;
-                    j++;
-                }
-
+            if (!hasEqualSign && j == 1) {
+                values[j] = s.substring(2, 4);
+                values[j + 1] = s.substring(4);
+                j = 3;
+            } else {
+                values[j] = s;
+                j++;
             }
         }
         return values;
