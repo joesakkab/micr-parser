@@ -1,3 +1,7 @@
+package com.progressoft.parser;
+
+import com.progressoft.parser.MicrInfo;
+
 public interface MicrParser {
     MicrInfo parse(String Micr);
     String getChequeNumber();
