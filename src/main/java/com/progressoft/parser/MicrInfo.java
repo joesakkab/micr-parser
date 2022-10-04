@@ -1,5 +1,7 @@
 package com.progressoft.parser;
 
+import com.progressoft.regex.MicrRegex;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,7 +14,9 @@ public class MicrInfo implements MicrParser {
     private String chequeDigit;
     private final Pattern pattern_;
 
-    public MicrInfo(String regex) {
+    public MicrInfo(String countryName) {
+        MicrRegex micrRegex = new MicrRegex();
+        String regex = micrRegex.getRegex(countryName);
         pattern_ = Pattern.compile(regex);
     }
     @Override

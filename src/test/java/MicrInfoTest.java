@@ -6,13 +6,11 @@ import com.progressoft.regex.MicrRegex;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MicrInfoTest {
-
-    private final MicrRegex micrRegex = new MicrRegex();
     @Test
 //    @Disabled
     @DisplayName("Oman MICR Test")
     void omanMircTest() {
-        MicrInfo micrInfo = new MicrInfo(micrRegex.getRegex("Oman"));
+        MicrInfo micrInfo = new MicrInfo("Oman");
         String micr = "<00002019<:02=0003:00000010220474< 001";
         micrInfo.parse(micr);
         assertAll(() ->  assertEquals("00002019", micrInfo.getChequeNumber()),
@@ -26,7 +24,7 @@ class MicrInfoTest {
 //    @Disabled
     @DisplayName("UAE MICR Test")
     void uaeMicrTest() {
-        MicrInfo micrInfo = new MicrInfo(micrRegex.getRegex("United Arab Emirates"));
+        MicrInfo micrInfo = new MicrInfo("United Arab Emirates");
         String micr = "<001590:013320143:<5003352420<";
         micrInfo.parse(micr);
         assertAll(() ->  assertEquals("001590", micrInfo.getChequeNumber()),
@@ -40,7 +38,7 @@ class MicrInfoTest {
 //    @Disabled
     @DisplayName("Bahrain MICR Test")
     void bahrainMicrTest() {
-        MicrInfo micrInfo = new MicrInfo(micrRegex.getRegex("Bahrain"));
+        MicrInfo micrInfo = new MicrInfo("Bahrain");
         String micr = "<000013<09=01:0001077181611<01";
         micrInfo.parse(micr);
         assertAll(() ->  assertEquals("000013", micrInfo.getChequeNumber()),
