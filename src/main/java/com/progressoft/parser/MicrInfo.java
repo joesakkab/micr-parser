@@ -1,90 +1,118 @@
 package com.progressoft.parser;
 
-import com.progressoft.regex.MicrRegex;
+import com.progressoft.regex.CountryConfig;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MicrInfo implements MicrParser {
 
-    private String chequeNumber;
-    private String bankCode;
-    private String branchCode;
-    private String accountNumber;
-    private String chequeDigit;
+    private String chequeNumber_;
+    private String bankCode_;
+    private String branchCode_;
+    private String accountNumber_;
+    private String chequeDigit_;
     private final Pattern pattern_;
+    private final boolean[] mandatoryFields_;
+    private Status status_;
+    private int emptyFields;
 
     public MicrInfo(String countryName) {
-        MicrRegex micrRegex = new MicrRegex();
-        String regex = micrRegex.getRegex(countryName);
+        CountryConfig countryConfig = new CountryConfig();
+        String regex = countryConfig.getRegex(countryName);
         pattern_ = Pattern.compile(regex);
+        mandatoryFields_ = countryConfig.getMandatoryFields(countryName);
+        emptyFields = 0;
     }
     @Override
     public MicrInfo parse(String micr) {
         Matcher matcher = pattern_.matcher(micr);
+        setStatus_(Enum.valueOf(Status.class, "FULLY_READ"));
         while (matcher.find()) {
-            setChequeNumber(matcher.group("chequeNumber"));
-            setBankCode(matcher.group("bankCode"));
-            setBranchCode(matcher.group("branchCode"));
-            setAccountNumber(matcher.group("accountNumber"));
-            String chequeDigit = matcher.group("chequeDigit");
-            if (chequeDigit.trim().equals("")) {
-                setChequeDigit(null);
-            } else {
-                setChequeDigit(matcher.group("chequeDigit"));
-            }
+            setChequeNumber_(setStatusGivenField(matcher.group("chequeNumber"), 0));
+            setBankCode_(setStatusGivenField(matcher.group("bankCode"), 1));
+            setBranchCode_(setStatusGivenField(matcher.group("branchCode"), 2));
+            setAccountNumber_(setStatusGivenField(matcher.group("accountNumber"), 3));
+            setChequeDigit_(setStatusGivenField(matcher.group("chequeDigit"), 4));
             System.out.println(toString());
         }
 
         return this;
     }
+
+    private String setStatusGivenField(String field, int i) {
+        if (!mandatoryFields_[i] && field.equals("")) {
+            return null;
+        } else if (mandatoryFields_[i] && field.equals("")) {
+            setStatus_(Enum.valueOf(Status.class, "PARTIALLY_READ"));
+            emptyFields++;
+        }
+        if (emptyFields == 5) {
+            setStatus_(Enum.valueOf(Status.class, "CORRUPTED"));
+        }
+        return field;
+    }
     @Override
     public String toString() {
-        return "Cheque number is: " + getChequeNumber()
-        + "\nBank Code is: " + getBankCode()
-        + "\nBranch Code is: " + getBranchCode()
-        + "\nAccount Number is: " + getAccountNumber()
-        + "\nCheque Digit is: " + getChequeDigit() + "\n";
+        return "Cheque number is: " + getChequeNumber_()
+        + "\nBank Code is: " + getBankCode_()
+        + "\nBranch Code is: " + getBranchCode_()
+        + "\nAccount Number is: " + getAccountNumber_()
+        + "\nCheque Digit is: " + getChequeDigit_() + "\n";
     }
 
-    public String getChequeNumber() {
-        return chequeNumber;
+    public String getChequeNumber_() {
+        return chequeNumber_;
     }
 
-    public void setChequeNumber(String chequeNumber) {
-        this.chequeNumber = chequeNumber;
+    public void setChequeNumber_(String chequeNumber) {
+        this.chequeNumber_ = chequeNumber;
     }
 
-    public String getBankCode() {
-        return bankCode;
+    public String getBankCode_() {
+        return bankCode_;
     }
 
-    public void setBankCode(String bankCode) {
-        this.bankCode = bankCode;
+    public void setBankCode_(String bankCode) {
+        this.bankCode_ = bankCode;
     }
 
-    public String getBranchCode() {
-        return branchCode;
+    public String getBranchCode_() {
+        return branchCode_;
     }
 
-    public void setBranchCode(String branchCode) {
-        this.branchCode = branchCode;
+    public void setBranchCode_(String branchCode) {
+        this.branchCode_ = branchCode;
     }
 
-    public String getAccountNumber() {
-        return accountNumber;
+    public String getAccountNumber_() {
+        return accountNumber_;
     }
 
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
+    public void setAccountNumber_(String accountNumber) {
+        this.accountNumber_ = accountNumber;
     }
 
-    public String getChequeDigit() {
-        return chequeDigit;
+    public String getChequeDigit_() {
+        return chequeDigit_;
     }
 
-    public void setChequeDigit(String chequeDigit) {
-        this.chequeDigit = chequeDigit;
+    public void setChequeDigit_(String chequeDigit) {
+        this.chequeDigit_ = chequeDigit;
+    }
+
+    public Status getStatus_() {
+        return status_;
+    }
+
+    public void setStatus_(Status status_) {
+        this.status_ = status_;
+    }
+
+    public enum Status {
+        FULLY_READ,
+        PARTIALLY_READ,
+        CORRUPTED
     }
 
 }
