@@ -4,6 +4,7 @@ import com.progressoft.MicrInfo;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+//TODO add parameterized test for all corrupted and partially read micr
 class MicrInfoTest {
     @Test
 //    @Disabled

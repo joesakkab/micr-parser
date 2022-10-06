@@ -3,6 +3,8 @@ package com.progressoft;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+//TODO use advanced builder
+//TODO separate MicrInfo from MicrParser (remove all getters from the interface)
 public class MicrInfo implements MicrParser {
 
     private String chequeNumber_;

@@ -3,6 +3,10 @@ package com.progressoft;
 import java.util.HashMap;
 import java.util.Locale;
 
+//TODO extract the group names as constants
+// TODO mandatoryFields as a map to link between group name and boolean value
+// TODO micrRegex as a map to link between country name and regex (simple map)
+
 public class CountryConfig {
     private final HashMap<String, String> micrRegex = new HashMap<>();
     private final HashMap<String, String> countryCodes = new HashMap<>();
