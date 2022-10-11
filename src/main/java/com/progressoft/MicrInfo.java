@@ -1,59 +1,32 @@
 package com.progressoft;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.HashMap;
+
+import static com.progressoft.CountryConfig.GroupNames.*;
 
 //TODO use advanced builder
 //TODO separate MicrInfo from MicrParser (remove all getters from the interface)
-public class MicrInfo implements MicrParser {
+public class MicrInfo {
 
     private String chequeNumber_;
     private String bankCode_;
     private String branchCode_;
     private String accountNumber_;
     private String chequeDigit_;
-    private final Pattern pattern_;
-    private final boolean[] mandatoryFields_;
-    private Status status_;
-    private int emptyFields;
+    private MicrStatus micrStatus_;
 
-    public MicrInfo(String countryName) {
-        CountryConfig countryConfig = new CountryConfig();
-        String regex = countryConfig.getRegex(countryName);
-        pattern_ = Pattern.compile(regex);
-        mandatoryFields_ = countryConfig.getMandatoryFields(countryName);
-        emptyFields = 0;
-    }
-    @Override
-    public MicrInfo parse(String micr) {
-        Matcher matcher = pattern_.matcher(micr);
-        setStatus_(Enum.valueOf(Status.class, "FULLY_READ"));
-        while (matcher.find()) {
-            setChequeNumber_(setStatusGivenField(matcher.group("chequeNumber"), 0));
-            setBankCode_(setStatusGivenField(matcher.group("bankCode"), 1));
-            setBranchCode_(setStatusGivenField(matcher.group("branchCode"), 2));
-            setAccountNumber_(setStatusGivenField(matcher.group("accountNumber"), 3));
-            setChequeDigit_(setStatusGivenField(matcher.group("chequeDigit"), 4));
-            System.out.println(toString());
-        }
+    private MicrInfo() {
+        chequeNumber_ = MicrStepBuilder.chequeNumber_;
+        bankCode_ = MicrStepBuilder.bankCode_;
+        branchCode_ = MicrStepBuilder.branchCode_;
+        accountNumber_ = MicrStepBuilder.accountNumber_;
+        chequeDigit_ = MicrStepBuilder.chequeDigit_;
+        micrStatus_ = MicrStepBuilder.micrStatus_;
 
-        return this;
     }
 
-    private String setStatusGivenField(String field, int i) {
-        if (!mandatoryFields_[i] && field.equals("")) {
-            return null;
-        } else if (mandatoryFields_[i] && field.equals("")) {
-            setStatus_(Enum.valueOf(Status.class, "PARTIALLY_READ"));
-            emptyFields++;
-        }
-        if (emptyFields == 5) {
-            setStatus_(Enum.valueOf(Status.class, "CORRUPTED"));
-        }
-        return field;
-    }
-    @Override
-    public String toString() {
+//    @Override
+    public String infoToString() {
         return "Cheque number is: " + getChequeNumber_()
                 + "\nBank Code is: " + getBankCode_()
                 + "\nBranch Code is: " + getBranchCode_()
@@ -101,18 +74,158 @@ public class MicrInfo implements MicrParser {
         this.chequeDigit_ = chequeDigit;
     }
 
-    public Status getStatus_() {
-        return status_;
+    public MicrStatus getMicrStatus_() {
+        return micrStatus_;
     }
 
-    public void setStatus_(Status status_) {
-        this.status_ = status_;
-    }
+    public void setMicrStatus_(MicrStatus micrStatus) { this.micrStatus_ = micrStatus; }
 
-    public enum Status {
+    public enum MicrStatus {
         FULLY_READ,
         PARTIALLY_READ,
         CORRUPTED
+    }
+
+    public static class MicrStepBuilder implements MicrParser {
+
+        public static String chequeNumber_;
+        public static String bankCode_;
+        public static String branchCode_;
+        public static String accountNumber_;
+        public static String chequeDigit_;
+        public static MicrStatus micrStatus_;
+        public static HashMap<String, Boolean> mandatoryFields_;
+
+        public MicrStepBuilder() {
+        }
+
+        public static ChequeNumber newBuilder() {
+            return new Steps();
+        }
+
+        @Override
+        public MicrInfo parse(String micr) {
+            return null;
+        }
+
+        public interface ChequeNumber {
+            BankCode setChequeNumber(String chequeNumber);
+        }
+
+        public interface BankCode {
+            BranchCode setBankCode(String bankCode);
+        }
+
+        public interface BranchCode {
+            AccountNumber setBranchCode(String branchCode);
+        }
+
+        public interface AccountNumber {
+            ChequeDigit setAccountNumber(String accountNumber);
+        }
+
+        public interface ChequeDigit {
+            BuildStep setChequeDigit(String chequeDigit);
+        }
+
+        public interface BuildStep {
+            MicrInfo build(HashMap<String, Boolean> mandatoryFields);
+        }
+
+
+        public static class Steps implements ChequeNumber, BankCode, BranchCode, AccountNumber,
+                ChequeDigit, BuildStep {
+
+            @Override
+            public BankCode setChequeNumber(String chequeNumber) {
+                chequeNumber_ = chequeNumber;
+                return this;
+            }
+
+            @Override
+            public BranchCode setBankCode(String bankCode) {
+                bankCode_ = bankCode;
+                return this;
+            }
+
+            @Override
+            public AccountNumber setBranchCode(String branchCode) {
+                branchCode_ = branchCode;
+                return this;
+            }
+
+            @Override
+            public ChequeDigit setAccountNumber(String accountNumber) {
+                accountNumber_ = accountNumber;
+                return this;
+            }
+
+            @Override
+            public BuildStep setChequeDigit(String chequeDigit) {
+                chequeDigit_ = chequeDigit;
+                return this;
+            }
+
+
+            public MicrInfo build(HashMap<String, Boolean> mandatoryFields) {
+                mandatoryFields_ = mandatoryFields;
+                retrieveMicrStatus();
+                MicrInfo info = new MicrInfo();
+                info.setChequeNumber_(chequeNumber_);
+                info.setBankCode_(bankCode_);
+                info.setBranchCode_(branchCode_);
+                info.setAccountNumber_(accountNumber_);
+                info.setChequeDigit_(chequeDigit_);
+                info.setMicrStatus_(micrStatus_);
+                return info;
+            }
+
+            private void retrieveMicrStatus() {
+                int nullAndMandatoryCount = setEmptyFieldsToNullAndGetCount();
+                if (getNumberOfMandatoryFields() == nullAndMandatoryCount) {
+                    micrStatus_ = MicrStatus.CORRUPTED;
+                } else if (nullAndMandatoryCount > 0){
+                    micrStatus_ = MicrStatus.PARTIALLY_READ;
+                } else {
+                    micrStatus_ = MicrStatus.FULLY_READ;
+                }
+
+            }
+
+            private int setEmptyFieldsToNullAndGetCount() {
+                int count = 0;
+                if (mandatoryFields_.get(CHEQUE_NUMBER) && chequeNumber_.isEmpty()) {
+                    count++;
+                    setChequeNumber(null);
+                }
+                if (mandatoryFields_.get(BANK_CODE) && bankCode_.isEmpty()) {
+                    count++;
+                    setBankCode(null);
+                }
+                if (mandatoryFields_.get(BRANCH_CODE) && branchCode_.isEmpty()) {
+                    count++;
+                    setBranchCode(null);
+                }
+                if (mandatoryFields_.get(ACCOUNT_NUMBER) && accountNumber_.isEmpty()) {
+                    count++;
+                    setAccountNumber(null);
+                }
+                if (mandatoryFields_.get(CHEQUE_DIGIT) && chequeDigit_.isEmpty()) {
+                    count++;
+                    setChequeDigit(null);
+                }
+                return count;
+            }
+
+            private int getNumberOfMandatoryFields() {
+                int result = 0;
+                for (Boolean fieldIsMandatory: mandatoryFields_.values()) {
+                    if (fieldIsMandatory) { result++;}
+                }
+                return result;
+            }
+
+        }
     }
 
 }

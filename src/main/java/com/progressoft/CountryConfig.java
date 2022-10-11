@@ -1,7 +1,8 @@
 package com.progressoft;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
+import java.util.List;
 
 //TODO extract the group names as constants
 // TODO mandatoryFields as a map to link between group name and boolean value
@@ -9,59 +10,68 @@ import java.util.Locale;
 
 public class CountryConfig {
     private final HashMap<String, String> micrRegex = new HashMap<>();
-    private final HashMap<String, String> countryCodes = new HashMap<>();
-    private final HashMap<String, boolean[]> mandatoryFields = new HashMap<>();
+    private final HashMap<String, HashMap<String , Boolean>> mandatoryFields = new HashMap<>();
 
+    public class GroupNames { ;
+        public static final String CHEQUE_NUMBER = "chequeNumber";
+        public static final String BANK_CODE = "bankCode";
+        public static final String BRANCH_CODE = "branchCode";
+        public static final String ACCOUNT_NUMBER = "accountNumber";
+        public static final String CHEQUE_DIGIT = "chequeDigit";
+    }
     public CountryConfig() {
-        setInitialValuesForClassMaps();
         updateRegexMap();
         updateMandatoryFields();
     }
 
-    private void setInitialValuesForClassMaps() {
-        for (String iso: Locale.getISOCountries()) {
-            String countryName = new Locale("", iso).getDisplayCountry();
-            countryCodes.put(countryName, iso);
-            micrRegex.put(iso, null);
-        }
-    }
 
     private void updateRegexMap() {
-        micrRegex.put(countryCodes.get("Bahrain"),
-                "\\D(?<chequeNumber>\\d+|\s*)\\D{1,2}(?<bankCode>\\d+|\s*)\\D*(?<branchCode>\\d+|\s*)" +
-                        "\\D+(?<accountNumber>\\d+|\s*)\\D+\s*(?<chequeDigit>\\d+|\s*)");
+        micrRegex.put("Bahrain",
+                "<\s*(?<chequeNumber>\\d+|\s*)\s*<\s*(?<bankCode>\\d+|\s*)\s*=\s*(?<branchCode>\\d+|\s*)" +
+                        "\s*:\s*(?<accountNumber>\\d+|\s*)\s*<\s*(?<chequeDigit>\\d+|\s*)");
 
-        micrRegex.put(countryCodes.get("Oman"),
-                "\\D(?<chequeNumber>\\d+|\s*)\\D{1,2}(?<bankCode>\\d+|\s*)\\D*(?<branchCode>\\d+|\s*)" +
-                        "\\D+(?<accountNumber>\\d+|\s*)\\D+\s*(?<chequeDigit>\\d+|\s*)");
+        micrRegex.put("Oman",
+                "<\s*(?<chequeNumber>\\d+|\s*)\s*<:\s*(?<bankCode>\\d+|\s*)\s*=\s*(?<branchCode>\\d+|\s*)" +
+                        "\s*:\s*(?<accountNumber>\\d+|\s*)\\s*<\s*(?<chequeDigit>\\d+|\s*)");
 
-        micrRegex.put(countryCodes.get("United Arab Emirates"),
-                "\\D(?<chequeNumber>\\d+|\s*)\\D01(?<bankCode>\\d{2}|\s*)\\D*(?<branchCode>\\d+|\s*)" +
-                        "\\D+(?<accountNumber>\\d+|\s*)\\D+\s*(?<chequeDigit>\\d*|\s*)");
+        micrRegex.put("United Arab Emirates",
+                "<\s*(?<chequeNumber>\\d+|\s*)\s*:(01|\\s*)(?<bankCode>\\d{2}|\s*)\s*\s*(?<branchCode>\\d+|\s*)" +
+                        "\s*:<\s*(?<accountNumber>\\d+|\s*)\s*<\s*(?<chequeDigit>\\d+|\s*)");
     }
 
     private void updateMandatoryFields() {
-        mandatoryFields.put(countryCodes.get("Oman"),
-                new boolean[]{true, true, true, true, true});
-        mandatoryFields.put(countryCodes.get("Bahrain"),
-                new boolean[]{true, true, true, true, true});
-        mandatoryFields.put(countryCodes.get("United Arab Emirates"),
-                new boolean[]{true, true, true, true, false});
+        mandatoryFields.put("Oman",
+                createMap(true, true, true, true, true));
+        mandatoryFields.put("Bahrain",
+                createMap(true, true, true, true, true));
+        mandatoryFields.put("United Arab Emirates",
+                createMap(true, true, true, true, false));
     }
 
+    private HashMap<String, Boolean> createMap(boolean chequeNumberIsMandatory, boolean bankCodeIsMandatory,
+                                               boolean branchCodeIsMandatory, boolean accountNumberIsMandatory,
+                                               boolean chequeDigitIsMandatory) {
+        HashMap<String, Boolean> result = new HashMap<>();
+        result.put(GroupNames.CHEQUE_NUMBER, chequeNumberIsMandatory);
+        result.put(GroupNames.BANK_CODE, bankCodeIsMandatory);
+        result.put(GroupNames.BRANCH_CODE, branchCodeIsMandatory);
+        result.put(GroupNames.ACCOUNT_NUMBER, accountNumberIsMandatory);
+        result.put(GroupNames.CHEQUE_DIGIT, chequeDigitIsMandatory);
+        return result;
+
+    }
 
     public String getRegex(String countryName) {
-        String countryCode = countryCodes.get(countryName);
-        String regex = micrRegex.get(countryCode);
+        String regex = micrRegex.get(countryName);
         if (regex == null) {
-            throw new RuntimeException("ERROR: This country does not have a " +
+            throw new MicrParserException("ERROR: This country does not have a " +
                     "registered regex string for parsing.");
         } else {
-            return micrRegex.get(countryCode);
+            return micrRegex.get(countryName);
         }
     }
 
-    public boolean[] getMandatoryFields(String countryName) {
-        return mandatoryFields.get(countryCodes.get(countryName));
+    public HashMap<String, Boolean> getMandatoryFields(String countryName) {
+        return mandatoryFields.get(countryName);
     }
 }
