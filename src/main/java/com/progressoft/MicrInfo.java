@@ -12,22 +12,6 @@ public class MicrInfo {
     private String chequeDigit_;
     private MicrStatus micrStatus_;
 
-    public MicrInfo(String chequeNumber,
-                       String bankCode,
-                       String branchCode,
-                       String accountNumber,
-                       String chequeDigit,
-                       String micrStatus) {
-        chequeNumber_ = chequeNumber;
-        bankCode_ = bankCode;
-        branchCode_ = branchCode;
-        accountNumber_ = accountNumber;
-        chequeDigit_ = chequeDigit;
-        micrStatus_ = Enum.valueOf(MicrStatus.class, micrStatus);
-    }
-
-    public MicrInfo(String micrStatus) {micrStatus_ = Enum.valueOf(MicrStatus.class, micrStatus);}
-
     private MicrInfo() {
         chequeNumber_ = MicrStepBuilder.chequeNumber_;
         bankCode_ = MicrStepBuilder.bankCode_;
