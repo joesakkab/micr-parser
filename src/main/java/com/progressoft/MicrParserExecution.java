@@ -24,13 +24,22 @@ public class MicrParserExecution implements MicrParser {
         }
 
         if (matcher.find()) {
-            return createMicrInfoObject(matcher);
+            return createMicrInfoObject(matcher, false);
         } else {
-            throw new MicrParserException("Provided micr did not find a match to the regex.");
+            return createMicrInfoObject(matcher, true);
         }
     }
 
-    private MicrInfo createMicrInfoObject(Matcher matcher) {
+    private MicrInfo createMicrInfoObject(Matcher matcher, boolean isNull) {
+        if (isNull) {
+            return MicrInfo.MicrStepBuilder.newBuilder()
+                    .setChequeNumber(null)
+                    .setBankCode(null)
+                    .setBranchCode(null)
+                    .setAccountNumber(null)
+                    .setChequeDigit(null)
+                    .build(null);
+        }
         return MicrInfo.MicrStepBuilder.newBuilder()
                 .setChequeNumber(matcher.group(CHEQUE_NUMBER).trim())
                 .setBankCode(matcher.group(BANK_CODE).trim())

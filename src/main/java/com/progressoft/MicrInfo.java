@@ -4,16 +4,29 @@ import java.util.HashMap;
 
 import static com.progressoft.CountryConfig.GroupNames.*;
 
-//TODO use advanced builder
-//TODO separate MicrInfo from MicrParser (remove all getters from the interface)
 public class MicrInfo {
-
     private String chequeNumber_;
     private String bankCode_;
     private String branchCode_;
     private String accountNumber_;
     private String chequeDigit_;
     private MicrStatus micrStatus_;
+
+    public MicrInfo(String chequeNumber,
+                       String bankCode,
+                       String branchCode,
+                       String accountNumber,
+                       String chequeDigit,
+                       String micrStatus) {
+        chequeNumber_ = chequeNumber;
+        bankCode_ = bankCode;
+        branchCode_ = branchCode;
+        accountNumber_ = accountNumber;
+        chequeDigit_ = chequeDigit;
+        micrStatus_ = Enum.valueOf(MicrStatus.class, micrStatus);
+    }
+
+    public MicrInfo(String micrStatus) {micrStatus_ = Enum.valueOf(MicrStatus.class, micrStatus);}
 
     private MicrInfo() {
         chequeNumber_ = MicrStepBuilder.chequeNumber_;
@@ -23,15 +36,6 @@ public class MicrInfo {
         chequeDigit_ = MicrStepBuilder.chequeDigit_;
         micrStatus_ = MicrStepBuilder.micrStatus_;
 
-    }
-
-//    @Override
-    public String infoToString() {
-        return "Cheque number is: " + getChequeNumber_()
-                + "\nBank Code is: " + getBankCode_()
-                + "\nBranch Code is: " + getBranchCode_()
-                + "\nAccount Number is: " + getAccountNumber_()
-                + "\nCheque Digit is: " + getChequeDigit_() + "\n";
     }
 
     public String getChequeNumber_() {
@@ -168,8 +172,17 @@ public class MicrInfo {
 
 
             public MicrInfo build(HashMap<String, Boolean> mandatoryFields) {
-                mandatoryFields_ = mandatoryFields;
-                retrieveMicrStatus();
+                if (mandatoryFields == null) {
+                    chequeNumber_ = null;
+                    bankCode_ = null;
+                    branchCode_ = null;
+                    accountNumber_ = null;
+                    chequeDigit_ = null;
+                    micrStatus_ = MicrStatus.CORRUPTED;
+                } else {
+                    mandatoryFields_ = mandatoryFields;
+                    retrieveMicrStatus();
+                }
                 MicrInfo info = new MicrInfo();
                 info.setChequeNumber_(chequeNumber_);
                 info.setBankCode_(bankCode_);
@@ -194,26 +207,21 @@ public class MicrInfo {
 
             private int setEmptyFieldsToNullAndGetCount() {
                 int count = 0;
-                if (mandatoryFields_.get(CHEQUE_NUMBER) && chequeNumber_.isEmpty()) {
-                    count++;
-                    setChequeNumber(null);
+                String[] groupNames = {CHEQUE_NUMBER, BANK_CODE, BRANCH_CODE, ACCOUNT_NUMBER, CHEQUE_DIGIT};
+                String[] fields = {chequeNumber_, bankCode_, branchCode_, accountNumber_, chequeDigit_};
+                for (int i = 0; i < fields.length; i++) {
+                    if (mandatoryFields_.get(groupNames[i]) && fields[i].isEmpty()) {
+                        count++;
+                        fields[i] = null;
+                    } else if (fields[i].isEmpty()) {
+                        fields[i] = null;
+                    }
                 }
-                if (mandatoryFields_.get(BANK_CODE) && bankCode_.isEmpty()) {
-                    count++;
-                    setBankCode(null);
-                }
-                if (mandatoryFields_.get(BRANCH_CODE) && branchCode_.isEmpty()) {
-                    count++;
-                    setBranchCode(null);
-                }
-                if (mandatoryFields_.get(ACCOUNT_NUMBER) && accountNumber_.isEmpty()) {
-                    count++;
-                    setAccountNumber(null);
-                }
-                if (mandatoryFields_.get(CHEQUE_DIGIT) && chequeDigit_.isEmpty()) {
-                    count++;
-                    setChequeDigit(null);
-                }
+                setChequeNumber(fields[0]);
+                setBankCode(fields[1]);
+                setBranchCode(fields[2]);
+                setAccountNumber(fields[3]);
+                setChequeDigit(fields[4]);
                 return count;
             }
 

@@ -1,18 +1,12 @@
 package com.progressoft;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
-//TODO extract the group names as constants
-// TODO mandatoryFields as a map to link between group name and boolean value
-// TODO micrRegex as a map to link between country name and regex (simple map)
 
 public class CountryConfig {
     private final HashMap<String, String> micrRegex = new HashMap<>();
     private final HashMap<String, HashMap<String , Boolean>> mandatoryFields = new HashMap<>();
 
-    public class GroupNames { ;
+    public static class GroupNames { ;
         public static final String CHEQUE_NUMBER = "chequeNumber";
         public static final String BANK_CODE = "bankCode";
         public static final String BRANCH_CODE = "branchCode";
