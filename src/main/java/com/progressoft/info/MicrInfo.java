@@ -1,9 +1,9 @@
-package com.progressoft;
+package com.progressoft.info;
 
 import java.util.HashMap;
 
-import static com.progressoft.CountryConfig.GroupNames.*;
-import static com.progressoft.StringUtils.isNullOrEmpty;
+import static com.progressoft.info.CountryConfig.GroupNames.*;
+import static com.progressoft.info.StringUtils.isNullOrEmpty;
 
 public class MicrInfo {
 

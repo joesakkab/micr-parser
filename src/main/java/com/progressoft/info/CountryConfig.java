@@ -1,4 +1,6 @@
-package com.progressoft;
+package com.progressoft.info;
+
+import com.progressoft.parser.MicrParserException;
 
 import java.util.HashMap;
 

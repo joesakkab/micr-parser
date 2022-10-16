@@ -1,4 +1,4 @@
-package com.progressoft;
+package com.progressoft.info;
 
 public class StringUtils {
 

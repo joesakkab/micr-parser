@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+    <servlet>
+        <servlet-name>MicrParser</servlet-name>
+        <servlet-class>com.progressoft.servlet.MicrParserServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MicrParser</servlet-name>
+        <url-pattern>/micr</url-pattern>
+    </servlet-mapping>
+</web-app>
