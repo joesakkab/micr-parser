@@ -2,7 +2,7 @@
 <web-app>
     <servlet>
         <servlet-name>MicrParser</servlet-name>
-        <servlet-class>com.progressoft.servlet.MicrParserServlet</servlet-class>
+        <servlet-class>com.progressoft.servlets.MicrParserServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>MicrParser</servlet-name>
