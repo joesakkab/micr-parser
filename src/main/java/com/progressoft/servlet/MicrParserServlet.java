@@ -11,6 +11,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+//TODO if the micr is corrupted, show the result page instead of errorPage
+//TODO replace null values with (-) when display it in result table
+//TODO refactor this class
+//TODO create maven modules to separate the domain logic from the application layer
+// (micr-parser (parent/pom), domain (parser logic/jar), application (servlet/jar), app-war (webapp/war))
 public class MicrParserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
