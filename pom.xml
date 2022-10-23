@@ -10,13 +10,12 @@
     <modules>
         <module>domain</module>
         <module>application</module>
-        <module>servlets</module>
     </modules>
     <packaging>pom</packaging>
 
     <properties>
-        <maven.compiler.source>18</maven.compiler.source>
         <maven.compiler.target>18</maven.compiler.target>
+        <maven.compiler.source>18</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

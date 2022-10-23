@@ -12,11 +12,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class MicrParserServlet extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String micr = req.getParameter("micr").trim();
         String countryName = req.getParameter("country").trim();
         RequestDispatcher errorDispatcher = req.getRequestDispatcher("errorPage.jsp");
+        String[] tokens = req.getRequestURL().toString().split("/");
+        String page = tokens[tokens.length - 2];
+        req.setAttribute("url",page);
         try {
             MicrParser micrParser = new MicrParserExecution(countryName);
             MicrInfo micrInfo = micrParser.parse(micr);

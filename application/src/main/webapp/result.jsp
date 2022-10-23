@@ -48,6 +48,7 @@ table, th, td {
 
     </table>
     <br>
-    <a href = "index.jsp" > Back to home page <a>
+    <% String url = "/" + request.getAttribute("url"); %>
+    <a href = "<%=url%>" > Back to home page <a>
 </form>
 </html>
