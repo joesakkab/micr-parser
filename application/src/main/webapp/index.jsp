@@ -6,8 +6,8 @@
     </p>
 
     <form action="micr" method="get">
-        <select name="country">
-            <option select>--Select a country--</option>
+        <select name="country" required>
+            <option value = "" select>--Select a country--</option>
             <% String[] list = (String[]) request.getAttribute("listOfRegisteredCountries");
             for (int i= 0; i < list.length; i++) {%>
             <option value="<%=list[i]%>"><%=list[i]%></option>

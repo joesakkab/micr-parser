@@ -15,7 +15,7 @@ public class StartServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setAttribute("listOfRegisteredCountries", new CountryConfig().getRegisteredCountries());
         RequestDispatcher dispatcher = req.getRequestDispatcher("index.jsp");
-        System.out.println("Servlet is called");
+        System.out.println("StartServlet is called");
         dispatcher.forward(req, resp);
 
     }
