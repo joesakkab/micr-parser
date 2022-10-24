@@ -1,4 +1,4 @@
-package com.progressoft;
+package com.progressoft.parser;
 
 public class MicrParserException extends RuntimeException {
     public MicrParserException(String message) {

@@ -4,21 +4,23 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.progressoft</groupId>
+    <groupId>com.progressoft</groupId>
     <artifactId>micr-parser</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>domain</module>
+        <module>application</module>
+    </modules>
+    <packaging>pom</packaging>
 
     <properties>
-        <maven.compiler.source>18</maven.compiler.source>
         <maven.compiler.target>18</maven.compiler.target>
+        <maven.compiler.source>18</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    <dependencies>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.9.0</version>
-        </dependency>
-    </dependencies>
+
+    <build>
+        <finalName>micr-parser</finalName>
+    </build>
 
 </project>

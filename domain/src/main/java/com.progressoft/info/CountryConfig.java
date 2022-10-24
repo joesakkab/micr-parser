@@ -1,7 +1,8 @@
-package com.progressoft;
+package com.progressoft.info;
+
+import com.progressoft.parser.MicrParserException;
 
 import java.util.HashMap;
-
 public class CountryConfig {
     private final HashMap<String, String> micrRegex = new HashMap<>();
     private final HashMap<String, HashMap<String , Boolean>> mandatoryFields = new HashMap<>();
@@ -68,4 +69,5 @@ public class CountryConfig {
     public HashMap<String, Boolean> getMandatoryFields(String countryName) {
         return mandatoryFields.get(countryName);
     }
+    public String[] getRegisteredCountries() { return micrRegex.keySet().toArray(new String[0]); }
 }

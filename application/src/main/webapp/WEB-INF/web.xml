@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+    <servlet>
+        <servlet-name>Start</servlet-name>
+        <servlet-class>com.progressoft.servlets.StartServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Start</servlet-name>
+        <url-pattern></url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>MicrParser</servlet-name>
+        <servlet-class>com.progressoft.servlets.MicrParserServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MicrParser</servlet-name>
+        <url-pattern>/micr</url-pattern>
+    </servlet-mapping>
+</web-app>

@@ -1,10 +1,13 @@
-package com.progressoft;
+package com.progressoft.parser;
+
+import com.progressoft.info.CountryConfig;
+import com.progressoft.info.MicrInfo;
+
+import static com.progressoft.info.CountryConfig.GroupNames.*;
 
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.progressoft.CountryConfig.GroupNames.*;
 
 public class MicrParserExecution implements MicrParser {
     private final HashMap<String, Boolean> mandatoryFields;

@@ -1,6 +1,6 @@
-import com.progressoft.MicrInfo;
-import com.progressoft.MicrParser;
-import com.progressoft.MicrParserExecution;
+import com.progressoft.info.MicrInfo;
+import com.progressoft.parser.MicrParser;
+import com.progressoft.parser.MicrParserExecution;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
